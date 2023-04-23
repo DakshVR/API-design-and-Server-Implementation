@@ -285,12 +285,39 @@ app.get("/users/business", (req, res) => {
     (business) => business.ownerid === parseInt(ownerid)
   );
 
+  let page = parseInt(req.query.page) || 1;
+  const pageSize = 10;
+  const lastPage = Math.ceil(list.length / pageSize);
+  page = page < 1 ? 1 : page;
+  page = page > lastPage ? lastPage : page;
+
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const businessPage = list.slice(start, end);
+
+  const links = {};
+  if (page < lastPage) {
+    links.nextPage = `/users/business?page=${page + 1}`;
+    links.lasttPage = `/users/business?page=${lastPage}`;
+  }
+  if (page > 1) {
+    links.prevPage = `/users/business?page=${page - 1}`;
+    links.firstPage = `/users/business?page=1`;
+  }
+
   if (list.length == 0) {
     res
       .status(404)
       .send(`The Owner with given id ${ownerid} does not own any business`);
   } else {
-    res.status(200).send(list);
+    res.status(200).send({
+      business: businessPage,
+      page: page,
+      pageSize: pageSize,
+      lastPage: lastPage,
+      total: list.length,
+      links: links,
+    });
   }
 });
 
@@ -298,12 +325,40 @@ app.get("/users/business", (req, res) => {
 app.get("/users/reviews", (req, res) => {
   let userid = parseInt(req.query.userid);
   const list = reviews.filter((review) => review.userid === parseInt(userid));
+
+  let page = parseInt(req.query.page) || 1;
+  const pageSize = 10;
+  const lastPage = Math.ceil(list.length / pageSize);
+  page = page < 1 ? 1 : page;
+  page = page > lastPage ? lastPage : page;
+
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const reviewsPage = list.slice(start, end);
+
+  const links = {};
+  if (page < lastPage) {
+    links.nextPage = `/users/reviews?page=${page + 1}`;
+    links.lasttPage = `/users/reviews?page=${lastPage}`;
+  }
+  if (page > 1) {
+    links.prevPage = `/users/reviews?page=${page - 1}`;
+    links.firstPage = `/users/reviews?page=1`;
+  }
+
   if (list.length == 0) {
     res
       .status(404)
       .send(`The User with given id ${userid} does not have any reviews.`);
   } else {
-    res.status(200).send(list);
+    res.status(200).send({
+      reviews: reviewsPage,
+      page: page,
+      pageSize: pageSize,
+      lastPage: lastPage,
+      total: list.length,
+      links: links,
+    });
   }
 });
 
@@ -311,6 +366,27 @@ app.get("/users/reviews", (req, res) => {
 app.get("/users/photos", (req, res) => {
   let userid = parseInt(req.query.userid);
   const list = photos.filter((photo) => photo.userid === parseInt(userid));
+
+  let page = parseInt(req.query.page) || 1;
+  const pageSize = 10;
+  const lastPage = Math.ceil(list.length / pageSize);
+  page = page < 1 ? 1 : page;
+  page = page > lastPage ? lastPage : page;
+
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const photosPage = list.slice(start, end);
+
+  const links = {};
+  if (page < lastPage) {
+    links.nextPage = `/users/photos?page=${page + 1}`;
+    links.lasttPage = `/users/photos?page=${lastPage}`;
+  }
+  if (page > 1) {
+    links.prevPage = `/users/photos?page=${page - 1}`;
+    links.firstPage = `/users/photos?page=1`;
+  }
+
   if (list.length == 0) {
     res
       .status(404)
@@ -318,6 +394,13 @@ app.get("/users/photos", (req, res) => {
         `The User with given id ${userid} does not have any photos uploaded.`
       );
   } else {
-    res.status(200).send(list);
+    res.status(200).send({
+      photos: photosPage,
+      page: page,
+      pageSize: pageSize,
+      lastPage: lastPage,
+      total: list.length,
+      links: links,
+    });
   }
 });
