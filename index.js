@@ -155,7 +155,7 @@ app.post("/reviews/create", (req, res) => {
   const { businessid, userid, dollars, stars, review } = req.body;
 
   if (!dollars || !stars) {
-    res.status(418).send("One of the Required Fields is Missing.");
+    res.status(400).send("One of the Required Fields is Missing.");
   } else {
     const businessIndex = businesses.findIndex(
       (business) => business.id === parseInt(businessid)
