@@ -68,7 +68,7 @@ app.patch("/business/modify/:id", (req, res) => {
     (business) => business.id === parseInt(id)
   );
   if (businessIndex === -1) {
-    res.status(400).send("Business Not Found");
+    res.status(404).send("Business Not Found");
   } else {
     const business = businesses[businessIndex];
     business.name = req.body.name || business.name;
@@ -92,7 +92,7 @@ app.delete("/business/delete/:id", (req, res) => {
   );
   if (businessIndex != -1) {
     businesses.splice(businessIndex, 1);
-    res.send(`Business With id ${id} has been deleted.`);
+    res.status(200).send(`Business With id ${id} has been deleted.`);
   } else {
     res.status(404).send("No Business Found");
   }
@@ -142,7 +142,7 @@ app.get("/business/detail/:id", (req, res) => {
       (review) => review.businessid === business.id
     );
     const photo = photos.filter((photo) => photo.businessid === business.id);
-    res.send({
+    res.status(200).send({
       business: business,
       reviews: review,
       photos: photo,
@@ -172,7 +172,7 @@ app.post("/reviews/create", (req, res) => {
         review,
       };
       reviews.push(newReview);
-      res.status(200).json(newReview);
+      res.status(201).json(newReview);
     }
   }
 });
@@ -211,9 +211,11 @@ app.delete("/review/delete", (req, res) => {
   );
   if (reviewIndex != -1) {
     reviews.splice(reviewIndex, 1);
-    res.send(
-      `Review for business ${businessid} by user ${userid} has been deleted.`
-    );
+    res
+      .status(200)
+      .send(
+        `Review for business ${businessid} by user ${userid} has been deleted.`
+      );
   } else {
     res.status(404).send("No Review Found");
   }
@@ -270,9 +272,11 @@ app.delete("/photos/delete", (req, res) => {
   );
   if (photoIndex != -1) {
     photos.splice(photoIndex, 1);
-    res.send(
-      `Photo for business ${businessid} by user ${userid} has been deleted.`
-    );
+    res
+      .status(200)
+      .send(
+        `Photo for business ${businessid} by user ${userid} has been deleted.`
+      );
   } else {
     res.status(404).send("No Review Found");
   }
